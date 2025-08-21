@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
+use App\Services\WahaService;
 
 class Project extends Model
 {
@@ -17,6 +18,7 @@ class Project extends Model
         'name',
         'description',
         'ticket_prefix',
+        'status',
         'start_date',
         'end_date',
         'pinned_date',
@@ -103,7 +105,24 @@ class Project extends Model
     public function generateExternalAccess()
     {
         $this->externalAccess()?->delete();
-    
+
         return ExternalAccess::generateForProject($this->id);
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(function (Project $project) {
+            if ($project->wasChanged('status')) {
+                $oldStatus = $project->getOriginal('status');
+                $service = app(WahaService::class);
+
+                $project->members->each(function ($user) use ($service, $project, $oldStatus) {
+                    $service->sendMessage(
+                        $user->phone_number,
+                        "Status project {$project->name} berubah dari {$oldStatus} menjadi {$project->status}"
+                    );
+                });
+            }
+        });
     }
 }

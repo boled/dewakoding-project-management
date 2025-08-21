@@ -68,28 +68,35 @@ A Laravel Filament 3 application for managing projects with ticket management an
    DB_PASSWORD=
    ```
 
-5. Run migrations:
+5. Configure WAHA WhatsApp API in `.env` file:
+   ```
+   WAHA_BASE_URL=
+   WAHA_TOKEN=
+   WAHA_DEFAULT_RECIPIENT=
+   ```
+
+6. Run migrations:
    ```
    php artisan migrate
    ```
 
-6. Create storage link for file uploads
+7. Create storage link for file uploads
    ```
    php artisan storage:link
    ```
 
-7. Create a Filament admin user:
+8. Create a Filament admin user:
    ```
    php artisan make:filament-user
    ```
-8. Activate Role & Permission
+9. Activate Role & Permission
    ```
    php artisan shield:setup
    php artisan shield:install
    php artisan shield:super-admin
    ```
 
-9. Start the development server:
+10. Start the development server:
    ```
    php artisan serve
    ```
@@ -158,6 +165,13 @@ They will be installed automatically when you run `composer install` and `npm in
 To run the application in development mode with auto-reloading, simply use the provided composer script:
    ```
    php artisan octane:start --server=frankenphp --watch
+   ```
+
+## Testing
+
+Run the test suite with SQLite in-memory database:
+   ```
+   DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test
    ```
 
 ## License
